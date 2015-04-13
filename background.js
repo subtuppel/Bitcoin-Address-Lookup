@@ -27,9 +27,8 @@ function openAddressInfo(address) {
 }
 
 var lookupItemId = chrome.contextMenus.create({title: 'Lookup Bitcoin address',
-					       contexts: ['link', 'selection'],
-					       id: 'lookup-address',
-					       targetUrlPatterns: ['bitcoin:*']});
+					       contexts: ['selection'],
+					       id: 'lookup-address'});
 
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
     if (info.menuItemId == lookupItemId) {
@@ -38,7 +37,7 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 	} else if (info.linkUrl) {
 	    var parsed = parseBitcoinURL(info.linkUrl);
 	    if (parsed) openAddressInfo(parsed.address);
-	    else window.alert('Invalid Bitcoin address!');
+	    else window.alert('Invalid BlackCoin address!');
 	}
     }
 });
