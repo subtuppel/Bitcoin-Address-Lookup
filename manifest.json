@@ -1,13 +1,13 @@
 {
-    "name": "Bitcoin Address Lookup",
+    "name": "BlackCoin Address Lookup",
     "version": "0.2",
     "manifest_version": 2,
 
     "description": "Lookup Bitcoin addresses from context menu.",
     "icons": {
-	"16": "images/bitcoin-16.png",
-	"48": "images/bitcoin-48.png",
-	"128": "images/bitcoin-128.png"
+	"16": "images/blk-16.png",
+	"48": "images/blk-48.png",
+	"128": "images/blk-128.png"
     },
 
     "background": {
