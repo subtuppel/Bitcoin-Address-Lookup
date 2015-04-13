@@ -26,7 +26,7 @@ function openAddressInfo(address) {
     chrome.tabs.create({ url: 'https://chainz.cryptoid.info/blk/address.dws?'+encodeURIComponent(address) });
 }
 
-var lookupItemId = chrome.contextMenus.create({title: 'Lookup Bitcoin address',
+var lookupItemId = chrome.contextMenus.create({title: 'Lookup BlackCoin address',
 					       contexts: ['selection'],
 					       id: 'lookup-address'});
 
