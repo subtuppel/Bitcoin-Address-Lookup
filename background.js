@@ -1,43 +1,53 @@
-
-/* Parse bitcoin URL query keys. */
-function parseBitcoinURL(url) {
-	var r = /^bitcoin:([a-zA-Z0-9]{27,34})(?:\?(.*))?$/;
-	var match = r.exec(url);
-	if (!match) return null;
-
-	var parsed = { url: url }
-
-	if (match[2]) {
-		var queries = match[2].split('&');
-		for (var i = 0; i < queries.length; i++) {
-			var query = queries[i].split('=');
-			if (query.length == 2) {
-				parsed[query[0]] = decodeURIComponent(query[1].replace(/\+/g, '%20'));
-			}
-		}
-	}
-
-	parsed.address = match[1];
-	return parsed;
+function openAddressInfo(address) {  
+  if (address.length == 34)
+    {
+     chrome.tabs.create({ url: 'https://chainz.cryptoid.info/blk/address.dws?'+encodeURIComponent(address) });
+    }  
+  if (address.length == 64)
+    {
+     chrome.tabs.create({ url: 'https://chainz.cryptoid.info/blk/tx.dws?'+encodeURIComponent(address) });
+    }         
 }
+  
+chrome.contextMenus.onClicked.addListener(function(info, tab) {
+  if (info.menuItemId == 'contextMenuId')
+   {
+	    openAddressInfo(info.selectionText); 
+   }
+});
 
-/* Open address info page in new tab. */
-function openAddressInfo(address) {
-    chrome.tabs.create({ url: 'https://chainz.cryptoid.info/blk/address.dws?'+encodeURIComponent(address) });
-}
-
-var lookupItemId = chrome.contextMenus.create({title: 'Lookup BlackCoin address',
-					       contexts: ['selection'],
-					       id: 'lookup-address'});
-
-chrome.contextMenus.onClicked.addListener(function (info, tab) {
-    if (info.menuItemId == lookupItemId) {
-	if (info.selectionText) {
-	    openAddressInfo(info.selectionText);
-	} else if (info.linkUrl) {
-	    var parsed = parseBitcoinURL(info.linkUrl);
-	    if (parsed) openAddressInfo(parsed.address);
-	    else window.alert('Invalid BlackCoin address!');
-	}
+//add a message listener that will modify the context menu however you see fit
+chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.message == 'updateContextMenu') { 
+    var text = request.text.trim();
+    var first = text.toLowerCase().substring(0,1);  
+    var r = /^[a-z0-9]+$/i   
+    var match = r.exec(text); 
+        if (request.selection && match && ((text.length == 34 && first == 'b') || text.length == 64 )) { 
+        var title = text.length == 34 ? 'Address' : 'Transaction';
+            chrome.contextMenus.update('contextMenuId',{
+                'title': 'lookup BlackCoin ' + title, 
+                'enabled': true, 
+                "contexts": ['selection'],
+                //"onclick":   window.alert(text.length)
+            });
+        } else {
+            chrome.contextMenus.update('contextMenuId',{
+                'title': 'No BlackCoin Address or Transaction', 
+                'enabled': false, 
+                "contexts":['selection']
+            });
+        }
+    } else {
+        sendResponse({});
     }
 });
+
+//The original context menu.  The important property is the id.  The rest is mostly 
+//arbitrary because it will be changed dynamically by the listener above.
+    chrome.contextMenus.create({
+        'id': 'contextMenuId', 
+        'enabled': false, 
+        'title': 'Some Title', 
+        "contexts": ['selection']
+        });

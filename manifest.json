@@ -16,5 +16,11 @@
     },
     "permissions": [
 	"contextMenus"
-    ]
+    ],
+      "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"]
+    }
+  ]
 }
